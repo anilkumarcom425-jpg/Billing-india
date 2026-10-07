@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Billing India - Smart GST & Retail Billing System</title>
+    
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+      %22background_color%22: %22%230f766e%22,
+      %22dir%22: %22ltr%22,
+      %22display%22: %22standalone%22,
+      %22name%22: %22Billing India - Smart GST & Retail Billing System%22,
+      %22orientation%22: %22any%22,
+      %22scope%22: %22/%22,
+      %22short_name%22: %22BillingIndia%22,
+      %22start_url%22: %22./index.html%22,
+      %22theme_color%22: %22%230d9488%22,
+      %22id%22: %22billing-india-app%22,
+      %22description%22: %22Dukandaron aur vyapariyon ke liye aasan digital billing aur GST software.%22,
+      %22icons%22: [
+        {
+          %22src%22: %22https://cdn-icons-png.flaticon.com/512/2921/2921222.png%22,
+          %22sizes%22: %22192x192%22,
+          %22type%22: %22image/png%22
+        },
+        {
+          %22src%22: %22https://cdn-icons-png.flaticon.com/512/2921/2921222.png%22,
+          %22sizes%22: %22512x512%22,
+          %22type%22: %22image/png%22
+        }
+      ]
+    }">
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0f766e 0%, #0369a1 50%, #4338ca 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        .page-view {
+            display: none;
+            width: 100%;
+            max-width: 520px;
+        }
+        .page-view.active {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .info-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 35px 25px;
+            border-radius: 18px;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            margin-top: 30px;
+            border-top: 5px solid #0d9488;
+        }
+        .info-card h1 {
+            color: #0f766e;
+            font-size: 24px;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .info-card p, .info-card ul {
+            color: #334155;
+            font-size: 13px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .info-card ul {
+            padding-left: 18px;
+            margin-top: 6px;
+            margin-bottom: 15px;
+        }
+        .info-card li {
+            margin-bottom: 6px;
+        }
+
+        .feature-box {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .feature-box h3 {
+            color: #166534;
+            font-size: 14px;
+            margin: 0 0 8px 0;
+        }
+
+        .faq-box {
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        .faq-box h3 {
+            color: #0f766e;
+            font-size: 14px;
+            margin: 0 0 8px 0;
+        }
+        .faq-box p {
+            margin: 6px 0 12px 0;
+            font-size: 12px;
+        }
+
+        .ad-container {
+            margin: 15px 0;
+            padding: 8px;
+            background: #f9f9f9;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .ad-placeholder-text {
+            font-size: 10px;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 3px;
+            font-weight: bold;
+        }
+
+        .menu-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .menu-icon {
+            width: 38px;
+            height: 38px;
+            background-color: #0d9488;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            transition: background 0.2s;
+        }
+        .menu-icon:hover { background-color: #0f766e; }
+        .menu-popup {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 48px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            width: 190px;
+            max-height: 78vh;
+            overflow-y: auto;
+            padding: 5px 0;
+            text-align: left;
+            z-index: 1000;
+        }
+        .menu-header-info {
+            padding: 6px 11px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 3px;
+        }
+        .menu-header-info p {
+            font-size: 10px;
+            color: #64748b;
+            margin: 0;
+            word-break: break-all;
+        }
+        .menu-header-info span {
+            font-weight: bold;
+            color: #0f172a;
+            font-size: 12px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 11px;
+            color: #334155;
+            text-decoration: none;
+            font-size: 11.5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .menu-item i { width: 15px; color: #0d9488; text-align: center; }
+        .menu-item:hover { background-color: #f1f5f9; color: #0d9488; }
+        .menu-divider { height: 1px; background-color: #e2e8f0; margin: 3px 0; }
+        .menu-item.logout { color: #ef4444; }
+        .menu-item.logout i { color: #ef4444; }
+        .menu-item.logout:hover { background-color: #fef2f2; }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.98);
+            padding: 35px 25px;
+            border-radius: 18px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            margin-top: 50px;
+            border-top: 5px solid #0d9488;
+        }
+        .login-card h2 {
+            color: #0f766e;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 13px;
+            margin-bottom: 12px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .forgot-link {
+            text-align: right;
+            margin-top: -5px;
+            margin-bottom: 15px;
+        }
+        .forgot-link a {
+            color: #0d9488;
+            font-size: 13px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .forgot-link a:hover { text-decoration: underline; }
+
+        .login-terms-text {
+            font-size: 11px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.5;
+        }
+        .login-terms-text a {
+            color: #0d9488;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .login-terms-text a:hover { text-decoration: underline; }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-wrapper input { width: 100%; padding-right: 40px; }
+        .eye-icon {
+            position: absolute;
+            right: 12px;
+            cursor: pointer;
+            color: #64748b;
+            font-size: 15px;
+        }
+        .eye-icon:hover { color: #0d9488; }
+
+        .btn-start {
+            display: inline-block;
+            background-color: #0d9488;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 6px 15px rgba(13, 148, 136, 0.35);
+            margin-top: 10px;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            width: 100%;
+        }
+        .btn-start:hover { background-color: #0f766e; }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            margin-top: 20px;
+            border-top: 5px solid #0d9488;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #ccfbf1 0%, #e0f2fe 100%);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #99f6e4;
+        }
+        .header h1 { margin: 0; color: #134e4a; font-size: 24px; }
+        .header p { margin: 4px 0 0; color: #0f766e; font-size: 13px; font-weight: 600; }
+
+        .section-title {
+            font-weight: bold;
+            color: #0f766e;
+            background: #ccfbf1;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border-left: 4px solid #0d9488;
+            margin-bottom: 12px;
+            margin-top: 18px;
+            font-size: 14px;
+        }
+
+        .form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+        label { font-size: 12px; color: #1e293b; margin-bottom: 4px; font-weight: 700; }
+        
+        input, select, textarea {
+            padding: 9px 11px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+            outline: none;
+            width: 100%;
+            color: #0f172a;
+            background-color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        .action-grid { display: flex; gap: 8px; margin-top: 15px; }
+        .btn-save {
+            flex: 1; background-color: #16a34a; color: white; border: none; padding: 10px 6px;
+            border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer;
+            box-shadow: 0 3px 8px rgba(22, 163, 74, 0.3);
+        }
+        .btn-save:hover { background-color: #15803d; }
+
+        .btn-pdf {
+            flex: 1; background-color: #0284c7; color: white; border: none; padding: 10px 6px;
+            border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer;
+            box-shadow: 0 3px 8px rgba(2, 132, 199, 0.3);
+        }
+        .btn-pdf:hover { background-color: #0369a1; }
+
+        .btn-reset {
+            flex: 1; background-color: #eab308; color: #713f12; border: none; padding: 10px 6px;
+            border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer;
+            box-shadow: 0 3px 8px rgba(234, 179, 8, 0.3);
+        }
+        .btn-reset:hover { background-color: #ca8a04; }
+
+        .btn-history-link {
+            width: 100%; background-color: #475569; color: white; border: none; padding: 10px;
+            border-radius: 6px; font-weight: bold; font-size: 13px; cursor: pointer; margin-top: 8px;
+        }
+        .btn-history-link:hover { background-color: #334155; }
+
+        .btn-submit {
+            width: 100%; padding: 12px; background-color: #0d9488; color: white; border: none;
+            border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.3);
+        }
+        .btn-submit:hover { background-color: #0f766e; }
+
+        #invoiceView {
+            display: none;
+            margin-top: 25px;
+            border-top: 2px dashed #94a3b8;
+            padding-top: 15px;
+        }
+        .bill-header {
+            text-align: center;
+            background: #ccfbf1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 15px; background: #fff; }
+        table, th, td { border: 1px solid #cbd5e1; }
+        th, td { padding: 9px; font-size: 13px; text-align: left; color: #0f172a; }
+        th { background-color: #f1f5f9; }
+        
+        .bill-summary {
+            float: right;
+            width: 240px;
+            font-size: 13px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .summary-row { display: flex; justify-content: space-between; padding: 4px 0; color: #1e293b; }
+        .summary-row.total { font-weight: bold; font-size: 15px; border-top: 2px solid #0f172a; padding-top: 6px; color: #0f172a; }
+
+        .history-card {
+            width: 100%;
+            max-width: 520px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            margin-top: 20px;
+            border-top: 5px solid #0d9488;
+        }
+        .history-row-item { cursor: pointer; transition: background 0.2s; }
+        .history-row-item:hover { background-color: #f0fdf4 !important; }
+
+        #billModal, #infoModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            padding: 15px;
+        }
+        .modal-content {
+            background: #ffffff;
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .close-modal {
+            position: absolute;
+            top: 12px; right: 15px; font-size: 22px; font-weight: bold; color: #64748b; cursor: pointer;
+        }
+        .close-modal:hover { color: #ef4444; }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: #ffffff;
+            border-top: 1px solid #cbd5e1;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+            overflow-x: auto;
+        }
+        .nav-item {
+            text-decoration: none; color: #64748b; font-size: 11px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            font-weight: 600; cursor: pointer; white-space: nowrap; padding: 0 4px;
+        }
+        .nav-item i { font-size: 18px; }
+        .nav-item.active, .nav-item:hover { color: #0d9488; }
+    </style>
+</head>
+<body>
+
+    <div id="publicHomeView" class="page-view active">
+        <div class="info-card">
+            <h1>Billing India - Smart GST & Retail Software</h1>
+            <p>Dukandaron, vyapariyon aur small business owners ke liye ek aasan, tez aur advanced digital billing platform. Bina kisi jhanjhat ke instant GST invoices, professional receipts, customer records aur items ko asaani se manage karein.</p>
+            
+            <div class="feature-box">
+                <h3>🚀 Mukhya Visheshtaayein (Key Features):</h3>
+                <ul>
+                    <li><b>Instant GST Invoicing:</b> Kuch hi seconds mein 0%, 5%, 12%, ya 18% GST rates ke sath professional bills taiyar karein.</li>
+                    <li><b>Purana Itihas (History Tracking):</b> Saare purane bills ki history dekhein, single ya multiple bills ko delete karein aur zaroorat parne par dobara print karein.</li>
+                    <li><b>Mobile & PC Friendly:</b> Ise aap apne mobile par app ki tarah install kar sakte hain ya computer par browser mein chala sakte hain.</li>
+                    <li><b>Offline Support:</b> Internet na hone par bhi aapka yeh billing system seamlessly kaam karta hai.</li>
+                </ul>
+            </div>
+
+            <div class="faq-box">
+                <h3>❓ Frequently Asked Questions (FAQ) & How It Works:</h3>
+                
+                <p><b>Q1. Yeh software kaise kaam karta hai? (How It Works)</b><br>
+                Aapko sabse pehle apna mobile number aur password daal kar login karna hota hai. Uske baad Billing Entry page par jakar dukan ki details, customer ki details aur product ki quantity/price bharni hoti hai. System automatically GST calculate karke bill generate kar deta hai.</p>
+
+                <p><b>Q2. Kya mera billing data online server par save hota hai?</b><br>
+                Nahi, aapka poora billing data aur shop ki details sirf aapke device ya browser ke local storage mein save hoti hain, jisse aapka data aapke paas surakshit rehta hai.</p>
+
+                <p><b>Q3. Kya hum purane bills ko dobara dekh ya print kar sakte hain?</b><br>
+                Haan, aap "History" tab mein jakar apne saare purane bills ki list dekh sakte hain, kisi bhi bill par click karke use dobara dekh sakte hain, ya Print/PDF option se print nikal sakte hain.</p>
+
+                <p><b>Q4. Kya yeh app mobile aur computer dono par chal sakti hai?</b><br>
+                Haan, yeh ek Progressive Web App (PWA) hai jise aap mobile ke browser se apne phone par install kar sakte hain ya computer par bhi chala sakte hain.</p>
+            </div>
+
+            <p><b>Developed By:</b> Anil Kumar Verma<br>Dukaanwalo ki digital zarooraton ko dhyan mein rakh kar specially design kiya gaya platform.</p>
+
+            <div class="ad-container">
+                <div class="ad-placeholder-text">Advertisement Space</div>
+            </div>
+
+            <button type="button" onclick="goToLogin()" class="btn-start">Login / Bill Banayein</button>
+        </div>
+    </div>
+
+    <div id="loginView" class="page-view">
+        <div class="login-card">
+            <h2>Billing India Login</h2>
+            <div id="loginError" class="error-msg">Wrong Password! Kripya sahi password dalein.</div>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label>Mobile Number:</label>
+                    <input type="text" id="loginUser" placeholder="Mobile number dalein" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 6px;">
+                    <label>Password:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="loginPass" placeholder="Password dalein" required>
+                        <i class="fa-solid fa-eye eye-icon" id="toggleLoginPass" onclick="togglePasswordVisibility('loginPass', 'toggleLoginPass')"></i>
+                    </div>
+                </div>
+                <div class="forgot-link">
+                    <a href="javascript:void(0)" onclick="showForgotPage()">Forgot Password?</a>
+                </div>
+                <button type="submit" class="btn-submit">Login Karein</button>
+            </form>
+            <div style="text-align: center; margin-top: 15px;">
+                <a href="javascript:void(0)" onclick="showPublicHome()" style="color: #0d9488; font-size: 13px; text-decoration: none; font-weight: 600;">&larr; Wapas Home Page par jayein</a>
+            </div>
+
+            <div class="login-terms-text">
+                Login karke aap hamari <a href="javascript:void(0)" onclick="openInfoModal('terms')">Terms & Conditions</a> aur <a href="javascript:void(0)" onclick="openInfoModal('privacy')">Privacy Policy</a> se sahamat hote hain.
+            </div>
+        </div>
+    </div>
+
+    <div id="forgotView" class="page-view">
+        <div class="login-card">
+            <h2>Reset Password</h2>
+            <form id="forgotForm" onsubmit="handleResetPassword(event)">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Registered Mobile Number:</label>
+                    <input type="text" id="forgotUser" placeholder="Apna mobile number dalein" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>New Password:</label>
+                    <div class="password-wrapper">
+                        <input type="password" id="newPass" placeholder="Naya password dalein" required>
+                        <i class="fa-solid fa-eye eye-icon" id="toggleNewPass" onclick="togglePasswordVisibility('newPass', 'toggleNewPass')"></i>
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit">Password Reset Karein</button>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="javascript:void(0)" onclick="showLoginPage()" style="color: #0d9488; font-size: 13px; text-decoration: none; font-weight: 600;">Wapas Login Karein</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="mainAppWrapper" class="page-view">
+
+        <div class="menu-container">
+            <div class="menu-icon" onclick="toggleMenuPopup()">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </div>
+            <div id="menuPopup" class="menu-popup">
+                <div class="menu-header-info">
+                    <p>Logged in:</p>
+                    <span id="displayUserMenu"></span>
+                </div>
+                <div class="menu-item" onclick="switchTab('dashboard'); toggleMenuPopup();">
+                    <i class="fa-solid fa-house"></i> Dashboard
+                </div>
+                <div class="menu-item" onclick="switchTab('entry'); toggleMenuPopup();">
+                    <i class="fa-solid fa-file-invoice-dollar"></i> Billing Entry
+                </div>
+                <div class="menu-item" onclick="switchTab('history'); toggleMenuPopup();">
+                    <i class="fa-solid fa-clock-rotate-left"></i> History
+                </div>
+                <div class="menu-item" onclick="switchTab('sales'); toggleMenuPopup();">
+                    <i class="fa-solid fa-chart-line"></i> Sales Dashboard
+                </div>
+                <div class="menu-item" onclick="switchTab('reports'); toggleMenuPopup();">
+                    <i class="fa-solid fa-file-chart-column"></i> Reports
+                </div>
+                <div class="menu-item" onclick="switchTab('profitloss'); toggleMenuPopup();">
+                    <i class="fa-solid fa-chart-pie"></i> Profit / Loss Report
+                </div>
+<div class="menu-item" onclick="switchTab('purchase'); toggleMenuPopup();">
+                    <i class="fa-solid fa-cart-shopping"></i> Purchase Entry
+                </div>
+<div class="menu-item" onclick="switchTab('stock'); toggleMenuPopup();">
+                    <i class="fa-solid fa-boxes-stacked"></i> Stock Management
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-item" onclick="switchTab('about'); toggleMenuPopup();">
+                    <i class="fa-solid fa-circle-info"></i> About Us
+                </div>
+                <div class="menu-item" onclick="switchTab('privacy'); toggleMenuPopup();">
+                    <i class="fa-solid fa-shield-halved"></i> Privacy Policy
+                </div>
+                <div class="menu-item" onclick="switchTab('terms'); toggleMenuPopup();">
+                    <i class="fa-solid fa-file-contract"></i> Terms & Conditions
+                </div>
+                <div class="menu-item" onclick="switchTab('support'); toggleMenuPopup();">
+                    <i class="fa-solid fa-headset"></i> Support / Contact
+                </div>
+                <div class="menu-item" onclick="switchTab('backup'); toggleMenuPopup();">
+                    <i class="fa-solid fa-database"></i> Backup & Restore
+                </div>
+                <div class="menu-divider"></div>
+                <div class="menu-item logout" onclick="handleLogout()">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </div>
+            </div>
+        </div>
+
+        <div id="dashboardView" class="page-view">
+            <div class="info-card">
+                <h1>Smart Billing & Retail Dashboard</h1>
+                <p>Aapke apne advanced GST aur retail billing system mein swagat hai. Yahan se aap asaani se apne saare naye bills manage aur create kar sakte hain.</p>
+                <a href="javascript:void(0)" onclick="switchTab('entry')" class="btn-start" style="text-decoration:none;">Naya Bill Banayein (Entry)</a>
+                    <a href="javascript:void(0)" onclick="switchTab('customers'); toggleMenuPopup();" id="navCustomers"><i class="fas fa-users"></i> Customer Management</a>
+            </div>
+        </div>
+
+        <div id="reportsView" class="page-view">
+            <div class="info-card" style="margin-top:50px; text-align:left;">
+                <h1 style="text-align:center;">Reports</h1>
+                <p style="text-align:center;">Aapke saved bills ka detailed business report.</p>
+
+                <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:18px;">
+                    <div class="form-group">
+                        <label>From Date:</label>
+                        <input type="date" id="reportFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date:</label>
+                        <input type="date" id="reportToDate">
+                    </div>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="loadReports()" style="margin-top:10px;width:100%;">Generate Report</button>
+                <button type="button" class="btn-reset" onclick="clearReportDates()" style="margin-top:10px;width:100%;">Clear Dates</button>
+
+                <div id="reportsSummary" style="margin-top:18px;"></div>
+            </div>
+        </div>
+
+        <div id="profitlossView" class="page-view">
+            <div class="info-card" style="margin-top:50px; text-align:left;">
+                <h1 style="text-align:center;">Profit / Loss Report</h1>
+                <p style="text-align:center;">Sales aur entered cost price ke aadhar par profit/loss dekhein.</p>
+                <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:18px;">
+                    <div class="form-group">
+                        <label>From Date:</label>
+                        <input type="date" id="profitFromDate">
+                    </div>
+                    <div class="form-group">
+                        <label>To Date:</label>
+                        <input type="date" id="profitToDate">
+                    </div>
+                </div>
+                <button type="button" class="btn-submit" onclick="loadProfitLossReport()" style="margin-top:10px;width:100%;">Generate Profit / Loss</button>
+                <button type="button" class="btn-reset" onclick="clearProfitLossDates()" style="margin-top:10px;width:100%;">Clear Dates</button>
+                <div id="profitLossSummary" style="margin-top:18px;"></div>
+            </div>
+        </div>
+
+        <div id="purchaseView" class="page-view">
+            <div class="info-card" style="margin-top:50px; text-align:left;">
+                <h1 style="text-align:center;">Purchase Entry</h1>
+                <p style="text-align:center;">Naya maal kharidne par purchase entry karein aur stock automatically badhayein.</p>
+                <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:18px;">
+                    <div><label>Product Name:</label><input type="text" id="purchaseProductName" placeholder="Jaise Aata"></div>
+                    <div><label>Quantity:</label><input type="number" id="purchaseQuantity" step="any" min="0.01" placeholder="Jaise 20"></div>
+                    <div><label>Unit:</label><select id="purchaseUnit"><option>Kg</option><option>Piece</option><option>Liter</option><option>Box</option><option>Packet</option><option>Meter</option></select></div>
+                    <div><label>Purchase Price (₹):</label><input type="number" id="purchasePrice" step="any" min="0" placeholder="Jaise 60"></div>
+                    <div><label>Supplier Name:</label><input type="text" id="purchaseSupplier" placeholder="Jaise ABC Traders"></div>
+                </div>
+                <button type="button" class="btn-submit" onclick="savePurchaseEntry()" style="margin-top:16px;width:100%;">Save Purchase Entry</button>
+                <div id="purchaseEntryList" style="margin-top:18px;"></div>
+            </div>
+        </div>
+
+        <div id="stockView" class="page-view">
+            <div class="info-card" style="margin-top:50px; text-align:left;">
+                <h1 style="text-align:center;">Stock Management</h1>
+                <p style="text-align:center;">Apne products ka stock yahan manage karein.</p>
+                <div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:18px;">
+                    <div><label>Product Name:</label><input type="text" id="stockProductName" placeholder="Jaise Aata"></div>
+                    <div><label>Quantity:</label><input type="number" id="stockQuantity" step="any" min="0" placeholder="Jaise 20"></div>
+                    <div><label>Unit:</label><select id="stockUnit"><option>Kg</option><option>Piece</option><option>Liter</option><option>Box</option><option>Packet</option><option>Meter</option></select></div>
+                    <div><label>Low Stock Alert:</label><input type="number" id="stockLowLevel" step="any" min="0" value="5"></div>
+                    <div><label>Purchase / Cost Price (₹):</label><input type="number" id="stockCostPrice" step="any" min="0" placeholder="Jaise 60"></div>
+                </div>
+                <button type="button" class="btn-submit" onclick="addStockItem()" style="margin-top:16px;width:100%;">Add / Update Stock</button>
+                <button type="button" class="btn-submit" onclick="loadStockManagement()" style="margin-top:10px;width:100%;">Refresh Stock</button>
+                <div id="stockList" style="margin-top:18px;"></div>
+            </div>
+        </div>
+
+        <div id="salesView" class="page-view">
+            <div class="info-card" style="margin-top: 50px; text-align: left;">
+                <h1 style="text-align:center;">Sales Dashboard</h1>
+                <p style="text-align:center;">Aapke saved bills ke aadhar par sales ka summary.</p>
+
+                <div style="display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:10px; margin-top:18px;">
+                    <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:14px;">
+                        <div style="font-size:11px; color:#64748b;">Total Sales</div>
+                        <div id="salesTotal" style="font-size:21px; font-weight:800; color:#166534; margin-top:5px;">₹0.00</div>
+                    </div>
+                    <div style="background:#eff6ff; border:1px solid #bfdbfe; border-radius:10px; padding:14px;">
+                        <div style="font-size:11px; color:#64748b;">Total Bills</div>
+                        <div id="salesBillCount" style="font-size:21px; font-weight:800; color:#1d4ed8; margin-top:5px;">0</div>
+                    </div>
+                    <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px;">
+                        <div style="font-size:11px; color:#64748b;">Average Bill</div>
+                        <div id="salesAverage" style="font-size:21px; font-weight:800; color:#334155; margin-top:5px;">₹0.00</div>
+                    </div>
+                    <div style="background:#fff7ed; border:1px solid #fed7aa; border-radius:10px; padding:14px;">
+                        <div style="font-size:11px; color:#64748b;">Today's Sales</div>
+                        <div id="salesToday" style="font-size:21px; font-weight:800; color:#c2410c; margin-top:5px;">₹0.00</div>
+                    </div>
+                </div>
+
+                <div style="margin-top:18px; background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:14px;">
+                    <h3 style="margin:0 0 10px; color:#0f766e; font-size:15px;">Top Products</h3>
+                    <div id="topProductsList" style="font-size:13px; color:#475569;">Abhi koi sales data nahi hai.</div>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="loadSalesDashboard()" style="margin-top:16px; width:100%;">Refresh Sales Dashboard</button>
+            </div>
+        </div>
+
+        <div id="entryView" class="page-view">
+            <div class="container" style="margin-top: 50px;">
+                <div class="header">
+                    <h1>Billing India</h1>
+                    <p>Smart GST & Retail Billing System</p>
+                </div>
+
+                <form id="billingForm">
+                    <div class="section-title">1. Dukan Ki Details</div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Dukan Ka Naam:</label><input type="text" id="shopName" required></div>
+                        <div class="form-group"><label>Mobile Number:</label><input type="text" id="shopPhone" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>GSTIN:</label><input type="text" id="shopGst"></div>
+                        <div class="form-group"><label>Dukan Ka Pata:</label><input type="text" id="shopAddress"></div>
+                    </div>
+
+                    <div class="section-title">2. Customer Ki Details</div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Customer Name:</label><input type="text" id="custName" required></div>
+                        <div class="form-group"><label>Customer Phone:</label><input type="text" id="custPhone" required></div>
+                    </div>
+
+                    <div class="section-title">3. Item & Billing Entry</div>
+                    <div id="itemsContainer">
+                        <div class="item-entry" data-item-row style="border:1px solid #cbd5e1; padding:12px; border-radius:8px; margin-bottom:10px; background:#f8fafc;">
+                            <div class="form-row">
+                                <div class="form-group"><label>Product Name:</label><input type="text" class="prodName" required></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group"><label>Quantity:</label><input type="number" class="prodQty" step="any" required></div>
+                                <div class="form-group"><label>Unit:</label>
+                                    <select class="prodUnit">
+                                        <option value="Kg">Kg</option>
+                                        <option value="Gram">Gram</option>
+                                        <option value="Pcs">Pcs</option>
+                                        <option value="Ltr">Ltr</option>
+                                    </select>
+                                </div>
+                                <div class="form-group"><label>Price (₹):</label><input type="number" class="prodPrice" step="any" required></div>
+                            </div>
+                            <button type="button" onclick="removeItemRow(this)" style="display:none; background:#ef4444; color:white; border:none; padding:7px 12px; border-radius:5px; cursor:pointer;">Item Hataayein</button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addItemRow()" style="background:#0d9488; color:white; border:none; padding:9px 14px; border-radius:6px; cursor:pointer; margin-bottom:12px;">+ Aur Item Jodein</button>
+
+                    <div class="form-row">
+                        <div class="form-group"><label>GST Rate (%):</label>
+                            <select id="gstRate">
+                                <option value="0">0%</option>
+                                <option value="5">5%</option>
+                                <option value="12" selected>12%</option>
+                                <option value="18">18%</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label>Discount (₹):</label><input type="number" id="discount" value="0"></div>
+                        <div class="form-group"><label>Payment:</label><select id="payMode"><option>UPI / Online</option><option>Cash</option></select></div>
+                    </div>
+
+                    <div class="action-grid">
+                        <button type="button" class="btn-save" onclick="saveBillRecord()">Save Karein</button>
+                        <button type="button" class="btn-pdf" onclick="window.print()">Print / PDF</button>
+                        <button type="button" class="btn-reset" onclick="resetForm()">Reset</button>
+                    </div>
+
+                    <button type="button" class="btn-history-link" onclick="switchTab('history')">Purana Itihas / History Dekhein</button>
+
+                    <button type="button" class="btn-submit" onclick="generateBill()">Generate Bill</button>
+                </form>
+
+                <div id="invoiceView">
+                    <div class="bill-header">
+                        <h2 id="outShopName"></h2>
+                        <p><b>Invoice No: <span id="outInvoiceNumber"></span></b></p>
+                        <p id="outShopAddress"></p>
+                        <p>Mobile: <span id="outShopPhone"></span></p>
+                        <p>Customer: <span id="outCustName"></span> (<span id="outCustPhone"></span>)</p>
+                    </div>
+                    <table>
+                        <thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                        <tbody id="outItemsBody"></tbody>
+                    </table>
+                    <div class="bill-summary">
+                        <div class="summary-row"><span>Subtotal:</span><span>₹<span id="outSubTotal"></span></span></div>
+                        <div class="summary-row"><span>Discount:</span><span>₹<span id="outDiscount"></span></span></div>
+                        <div class="summary-row"><span>GST:</span><span>₹<span id="outGstAmount"></span></span></div>
+                        <div class="summary-row total"><span>Grand Total:</span><span>₹<span id="outGrandTotal"></span></span></div>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="historyView" class="page-view">
+            <div class="history-card" style="margin-top: 50px;">
+                <div class="header">
+                    <h1>Billing History</h1>
+                    <p>Kisi bhi bill par click karke poora bill dekhein</p>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; background: #f8fafc; padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px;">
+                        <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAll(this)" style="cursor: pointer; width: 15px; height: 15px;"> Sabhi Select Karein
+                    </label>
+                    <button type="button" onclick="deleteSelectedBills()" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer;">
+                        <i class="fa-solid fa-trash"></i> Delete Selected
+                    </button>
+                </div>
+
+                <div id="historyListContainer"></div>
+                <button type="button" class="btn-submit" onclick="switchTab('entry')" style="margin-top: 20px;">Wapas Naye Bill Par Jayein</button>
+            </div>
+        </div>
+
+        <div id="billModal">
+            <div class="modal-content">
+                <span class="close-modal" onclick="closeBillModal()">&times;</span>
+                <div class="bill-header" style="margin-top: 15px;">
+                    <h2 id="modalShopName"></h2>
+                    <p id="modalShopAddress"></p>
+                    <p>Mobile: <span id="modalShopPhone"></span></p>
+                    <p>Customer: <span id="modalCustName"></span> (<span id="modalCustPhone"></span>)</p>
+                    <p><b>Invoice No: <span id="modalInvoiceNumber"></span></b></p>
+                    <p style="font-size: 11px; color: #64748b; margin-top: 5px;">Date: <span id="modalDate"></span></p>
+                </div>
+                <table>
+                    <thead><tr><th>Item</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                    <tbody id="modalItemsBody"></tbody>
+                </table>
+                <div class="bill-summary" style="float: none; width: 100%; margin-top: 10px;">
+                    <div class="summary-row"><span>Subtotal:</span><span>₹<span id="modalSubTotal"></span></span></div>
+                    <div class="summary-row"><span>Discount:</span><span>₹<span id="modalDiscount"></span></span></div>
+                    <div class="summary-row"><span>GST:</span><span>₹<span id="modalGstAmount"></span></span></div>
+                    <div class="summary-row total"><span>Grand Total:</span><span>₹<span id="modalGrandTotal"></span></span></div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
+                    <button type="button" class="btn-pdf" onclick="window.print()" style="flex:1; padding: 10px;">Print Karein</button>
+                    <button type="button" class="btn-reset" onclick="closeBillModal()" style="flex:1; padding: 10px;">Band Karein</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="customersView" class="page-view">
+            <div class="container" style="margin-top:50px;">
+                <div class="header"><h1>Customer Management</h1><p>Customer records aur purchase history ko ek jagah manage karein</p></div>
+                <div class="section-title">Customer Search</div>
+                <div class="form-group"><input type="text" id="customerSearch" placeholder="Customer name ya mobile se search karein" oninput="loadCustomerManagement()"></div>
+                <div id="customerSummary" style="margin:12px 0; font-weight:600; color:#0f766e;"></div>
+                <div id="customerList"></div>
+                <button type="button" class="btn-submit" onclick="loadCustomerManagement()" style="margin-top:16px; width:100%;">Refresh Customer Management</button>
+            </div>
+        </div>
+
+        <div id="aboutView" class="page-view">
+            <div class="info-card">
+                <h1>About Us</h1>
+                <p><b>Billing India (Anil Smart Billing)</b> ek advanced aur aasan GST aur retail billing software hai, jise dukandaaron aur vyapariyon ki rozmarra ki zarooraton ko dhyan mein rakh kar banaya gaya hai.</p>
+                <ul>
+                    <li><b>Hamara Lakshya:</b> Small aur medium retail shops ko digital aur error-free billing provide karna taaki unka vyapar aur tej se badh sake.</li>
+                    <li><b>Visheshtaayein:</b> Ismein aap bina kisi jhanjhat ke instant GST invoices, customer records, aur purane bills ki history maintain kar sakte hain.</li>
+                    <li><b>Developed By:</b> Yeh platform Anil Kumar Verma dwara dukaanwalo ki suvidha ke liye design kiya gaya hai.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="privacyView" class="page-view">
+            <div class="info-card">
+                <h1>Privacy Policy</h1>
+                <p>Smart Billing system aapki data ki poori suraksha aur gopniyata ko dhyan mein rakh kar banaya gaya hai:</p>
+                <ul>
+                    <li><b>Data Storage:</b> Aapka poora billing data aur shop ki details sirf aapke computer/browser ke local storage mein safe rehti hain.</li>
+                    <li><b>No Server Upload:</b> Hum kisi bhi tarah ka personal ya business data apne server par save nahi karte hain.</li>
+                    <li><b>Security:</b> Yeh system puri tarah secure aur offline-friendly hai.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="termsView" class="page-view">
+            <div class="info-card">
+                <h1>Terms & Conditions</h1>
+                <p>Hamare billing software ko use karne ke niyam aur shartein:</p>
+                <ul>
+                    <li>Is application ka upyog aap apne vyaparik billing aur invoices banane ke liye kar sakte hain.</li>
+                    <li>Diy gaye data aur bills ki accuracy ki zimmedari user ki khud ki hogi.</li>
+                    <li>Bina anugya ke iske design ya code mein badlav karna वर्जित hai.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="backupView" class="page-view">
+            <div class="info-card" style="margin-top: 50px;">
+                <h1>Backup & Restore</h1>
+                <p>Apne billing records ka backup apne device mein file ke roop mein save karein aur zaroorat padne par wapas restore karein.</p>
+
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:16px; margin-top:15px;">
+                    <h3 style="margin-top:0; color:#0f766e;">📦 Backup</h3>
+                    <p style="font-size:13px; color:#475569;">Aapke saved bills aur invoice numbering ka backup ek JSON file mein download hoga.</p>
+                    <button type="button" onclick="downloadBackup()" style="background:#0d9488; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
+                        <i class="fa-solid fa-download"></i> Download Backup
+                    </button>
+                </div>
+
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; border-radius:10px; padding:16px; margin-top:15px;">
+                    <h3 style="margin-top:0; color:#0f766e;">♻️ Restore</h3>
+                    <p style="font-size:13px; color:#475569;">Pehle se banayi hui Billing India backup file select karke apne bills restore karein.</p>
+                    <input type="file" id="backupFileInput" accept="application/json,.json" style="display:none;" onchange="restoreBackup(event)">
+                    <button type="button" onclick="document.getElementById('backupFileInput').click()" style="background:#2563eb; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; font-weight:bold;">
+                        <i class="fa-solid fa-upload"></i> Restore Backup
+                    </button>
+                </div>
+
+                <p style="font-size:12px; color:#64748b; margin-top:15px;">⚠️ Restore karne par current user ke saved billing records backup ke records se replace ho jayenge.</p>
+            </div>
+        </div>
+
+        <div id="supportView" class="page-view" style="max-width: 520px; width: 100%;">
+            <div class="info-card" style="text-align: left; padding: 30px 25px; margin-top: 50px;">
+                <h1 style="text-align: center; font-size: 24px; margin-bottom: 10px;">Contact Us & Support</h1>
+                <p style="font-size: 13px; color: #475569; text-align: center; margin-bottom: 15px;">
+                    Support Hours: Somvaar se Shanivar (Subah 10:00 baje se Sham 6:00 baje tak)
+                </p>
+
+                <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #166534;">
+                    <p style="margin: 0 0 5px 0;"><b>📞 WhatsApp Support:</b> +91 74249-67425</p>
+                    <p style="margin: 0;"><b>📧 Email Support:</b> anilkumarcom425@gmail.com</p>
+                </div>
+
+                <h3 style="color: #0f766e; font-size: 14px; margin-bottom: 15px;">Apni Samasya ya Shikayat Yahan Bhejein:</h3>
+                
+                <form onsubmit="sendSupportMessage(event)">
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Aapka Naam:</label>
+                        <input type="text" id="suppName" placeholder="Apna naam darj karein" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Mobile Number:</label>
+                        <input type="text" id="suppPhone" placeholder="Apna mobile number darj karein" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 12px;">
+                        <label>Email Address (Optional):</label>
+                        <input type="email" id="suppEmail" placeholder="Apna email darj karein">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label>Samasya / Message:</label>
+                        <textarea id="suppMsg" rows="3" placeholder="Apni samasya yahan likhein..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">WhatsApp Par Bhejein</button>
+                </form>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a id="navDashboard" href="javascript:void(0)" onclick="switchTab('dashboard')" class="nav-item active">
+                <i class="fa-solid fa-house"></i>
+                <span>Home</span>
+            </a>
+            <a id="navEntry" href="javascript:void(0)" onclick="switchTab('entry')" class="nav-item">
+                <i class="fa-solid fa-file-invoice-dollar"></i>
+                <span>Entry</span>
+            </a>
+            <a id="navHistory" href="javascript:void(0)" onclick="switchTab('history')" class="nav-item">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                <span>History</span>
+            </a>
+            <a id="navAbout" href="javascript:void(0)" onclick="switchTab('about')" class="nav-item">
+                <i class="fa-solid fa-circle-info"></i>
+                <span>About</span>
+            </a>
+            <a id="navSupport" href="javascript:void(0)" onclick="switchTab('support')" class="nav-item">
+                <i class="fa-solid fa-headset"></i>
+                <span>Support</span>
+            </a>
+        </nav>
+    </div>
+
+    <div id="infoModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeInfoModal()">&times;</span>
+            <div id="modalInfoBody" style="margin-top: 15px; font-size: 13px; color: #334155; line-height: 1.6;"></div>
+            <button type="button" class="btn-reset" onclick="closeInfoModal()" style="width: 100%; margin-top: 15px; padding: 10px;">Band Karein</button>
+        </div>
+    </div>
+
+    <script>
+        // Embedded PWA Service Worker via Data URI
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                var swCode = "self.addEventListener('fetch', function(event) {});";
+                var blob = new Blob([swCode], {type: 'application/javascript'});
+                var swUrl = URL.createObjectURL(blob);
+                navigator.serviceWorker.register(swUrl).catch(function(err) {
+                    console.log('ServiceWorker registration failed: ', err);
+                });
+            });
+        }
+
+        window.onload = function() {
+            var loggedUser = localStorage.getItem('billingUser');
+            if (loggedUser) {
+                hideAllViews();
+                document.getElementById('mainAppWrapper').classList.add('active');
+                document.getElementById('displayUserMenu').innerText = loggedUser;
+                switchTab('dashboard');
+                loadHistory();
+            } else {
+                showPublicHome();
+            }
+        };
+
+        function hideAllViews() {
+            document.getElementById('publicHomeView').classList.remove('active');
+            document.getElementById('loginView').classList.remove('active');
+            document.getElementById('forgotView').classList.remove('active');
+            document.getElementById('mainAppWrapper').classList.remove('active');
+        }
+
+        function showPublicHome() {
+            hideAllViews();
+            document.getElementById('publicHomeView').classList.add('active');
+        }
+
+        function goToLogin() {
+            hideAllViews();
+            document.getElementById('loginView').classList.add('active');
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function showLoginPage() {
+            goToLogin();
+        }
+
+        function showForgotPage() {
+            hideAllViews();
+            document.getElementById('forgotView').classList.add('active');
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        function togglePasswordVisibility(fieldId, iconId) {
+            var passwordField = document.getElementById(fieldId);
+            var icon = document.getElementById(iconId);
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            var userInput = document.getElementById('loginUser').value.trim();
+            var passInput = document.getElementById('loginPass').value;
+            var savedPass = localStorage.getItem('billingPass_' + userInput);
+
+            if (savedPass === null) {
+                localStorage.setItem('billingPass_' + userInput, passInput);
+                localStorage.setItem('billingUser', userInput);
+                loginSuccess(userInput);
+            } else if (savedPass === passInput) {
+                localStorage.setItem('billingUser', userInput);
+                loginSuccess(userInput);
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function handleResetPassword(event) {
+            event.preventDefault();
+            var userInput = document.getElementById('forgotUser').value.trim();
+            var newPass = document.getElementById('newPass').value;
+            localStorage.setItem('billingPass_' + userInput, newPass);
+            alert("Password safalpurvak reset ho gaya hai! Ab aap naye password se login karein.");
+            showLoginPage();
+        }
+        
+        function loginSuccess(user) {
+            hideAllViews();
+            document.getElementById('mainAppWrapper').classList.add('active');
+            document.getElementById('displayUserMenu').innerText = user;
+            switchTab('dashboard');
+            loadHistory();
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('billingUser');
+            showPublicHome();
+        }
+
+        function toggleMenuPopup() {
+            var popup = document.getElementById('menuPopup');
+            popup.style.display = (popup.style.display === 'block') ? 'none' : 'block';
+        }
+
+        window.onclick = function(event) {
+            if (!event.target.closest('.menu-container')) {
+                var popup = document.getElementById('menuPopup');
+                if (popup && popup.style.display === 'block') {
+                    popup.style.display = 'none';
+                }
+            }
+        };
+
+        function switchTab(tabName) {
+            var views = ['dashboard', 'entry', 'history', 'sales', 'reports', 'purchase', 'stock', 'customers', 'about', 'privacy', 'terms', 'support', 'backup'];
+            views.forEach(function(v) {
+                var el = document.getElementById(v + 'View');
+                if(el) el.classList.remove('active');
+                var nav = document.getElementById('nav' + v.charAt(0).toUpperCase() + v.slice(1));
+                if(nav) nav.classList.remove('active');
+            });
+            
+            var targetView = document.getElementById(tabName + 'View');
+            if(targetView) targetView.classList.add('active');
+            var targetNav = document.getElementById('nav' + tabName.charAt(0).toUpperCase() + tabName.slice(1));
+            if(targetNav) targetNav.classList.add('active');
+
+            if(tabName === 'history') {
+                loadHistory();
+            }
+            if(tabName === 'sales') {
+                loadSalesDashboard();
+            }
+            if(tabName === 'reports') {
+                loadReports();
+            }
+            if(tabName === 'purchase') {
+                loadPurchaseEntries();
+            }
+            if(tabName === 'stock') {
+                loadStockManagement();
+            }
+            if(tabName === 'customers') {
+                loadCustomerManagement();
+            }
+        }
+
+        function getCustomerStorageKey() {
+            var user = localStorage.getItem('billingUser') || 'default';
+            return 'bills_' + user;
+        }
+
+        function loadCustomerManagement() {
+            var listEl = document.getElementById('customerList');
+            var summaryEl = document.getElementById('customerSummary');
+            var searchEl = document.getElementById('customerSearch');
+            if (!listEl || !summaryEl) return;
+
+            var bills = JSON.parse(localStorage.getItem(getCustomerStorageKey())) || [];
+            var search = searchEl ? searchEl.value.trim().toLowerCase() : '';
+            var customers = {};
+
+            bills.forEach(function(bill) {
+                var name = (bill.customerName || bill.custName || '').trim();
+                var phone = (bill.customerPhone || bill.custPhone || '').trim();
+                if (!name && !phone) return;
+                var key = phone || name.toLowerCase();
+                if (!customers[key]) {
+                    customers[key] = { name: name || 'Unknown Customer', phone: phone || '-', bills: 0, total: 0, lastDate: '' };
+                }
+                customers[key].bills += 1;
+                customers[key].total += Number(bill.grandTotal) || 0;
+                var d = bill.date || bill.createdAt || '';
+                if (d && (!customers[key].lastDate || String(d) > String(customers[key].lastDate))) customers[key].lastDate = d;
+                if (!customers[key].name || customers[key].name === 'Unknown Customer') customers[key].name = name || customers[key].name;
+            });
+
+            var arr = Object.keys(customers).map(function(k){ return customers[k]; });
+            arr.sort(function(a,b){ return b.total - a.total; });
+            if (search) {
+                arr = arr.filter(function(c){ return c.name.toLowerCase().indexOf(search) !== -1 || c.phone.toLowerCase().indexOf(search) !== -1; });
+            }
+
+            summaryEl.textContent = 'Total Customers: ' + Object.keys(customers).length + ' | Showing: ' + arr.length;
+            if (!arr.length) {
+                listEl.innerHTML = '<div class="history-card"><p style="margin:0; text-align:center;">Abhi koi customer record nahi mila.</p></div>';
+                return;
+            }
+
+            listEl.innerHTML = arr.map(function(c, index) {
+                return '<div class="history-card" style="margin:12px 0; border-top-color:#0d9488;">' +
+                    '<h3 style="margin:0 0 8px; color:#0f766e;">' + escapeHtml(c.name) + '</h3>' +
+                    '<p style="margin:4px 0;"><b>Mobile:</b> ' + escapeHtml(c.phone) + '</p>' +
+                    '<p style="margin:4px 0;"><b>Total Bills:</b> ' + c.bills + '</p>' +
+                    '<p style="margin:4px 0;"><b>Total Purchase:</b> ₹' + c.total.toFixed(2) + '</p>' +
+                    '<p style="margin:4px 0;"><b>Last Bill:</b> ' + escapeHtml(c.lastDate || '-') + '</p>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function escapeHtml(value) {
+            return String(value == null ? '' : value).replace(/[&<>'"]/g, function(ch) {
+                return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch];
+            });
+        }
+
+        function getBillItems() {
+            var rows = document.querySelectorAll('#itemsContainer [data-item-row]');
+            var items = [];
+            rows.forEach(function(row) {
+                var name = row.querySelector('.prodName').value.trim();
+                var qty = parseFloat(row.querySelector('.prodQty').value) || 0;
+                var unit = row.querySelector('.prodUnit').value;
+                var price = parseFloat(row.querySelector('.prodPrice').value) || 0;
+                if (name) items.push({ name: name, qty: qty, unit: unit, price: price });
+            });
+            return items;
+        }
+
+        function addItemRow() {
+            var container = document.getElementById('itemsContainer');
+            var row = document.createElement('div');
+            row.className = 'item-entry';
+            row.setAttribute('data-item-row', '');
+            row.style.cssText = 'border:1px solid #cbd5e1; padding:12px; border-radius:8px; margin-bottom:10px; background:#f8fafc;';
+            row.innerHTML = '<div class="form-row"><div class="form-group"><label>Product Name:</label><input type="text" class="prodName" required></div></div>' +
+                '<div class="form-row"><div class="form-group"><label>Quantity:</label><input type="number" class="prodQty" step="any" required></div>' +
+                '<div class="form-group"><label>Unit:</label><select class="prodUnit"><option value="Kg">Kg</option><option value="Gram">Gram</option><option value="Pcs">Pcs</option><option value="Ltr">Ltr</option></select></div>' +
+                '<div class="form-group"><label>Price (₹):</label><input type="number" class="prodPrice" step="any" required></div></div>' +
+                '<button type="button" onclick="removeItemRow(this)" style="background:#ef4444; color:white; border:none; padding:7px 12px; border-radius:5px; cursor:pointer;">Item Hataayein</button>';
+            container.appendChild(row);
+            updateRemoveButtons();
+        }
+
+        function removeItemRow(button) {
+            var rows = document.querySelectorAll('#itemsContainer [data-item-row]');
+            if (rows.length <= 1) return;
+            button.closest('[data-item-row]').remove();
+            updateRemoveButtons();
+        }
+
+        function updateRemoveButtons() {
+            var rows = document.querySelectorAll('#itemsContainer [data-item-row]');
+            rows.forEach(function(row) {
+                var btn = row.querySelector('button');
+                if (btn) btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
+            });
+        }
+
+        var currentInvoiceNumber = null;
+
+        function getNextInvoiceNumber(user) {
+            var counterKey = 'invoiceCounter_' + user;
+            var counter = parseInt(localStorage.getItem(counterKey) || '0', 10);
+            return 'INV-' + String(counter + 1).padStart(4, '0');
+        }
+
+        function assignNextInvoiceNumber(user) {
+            var counterKey = 'invoiceCounter_' + user;
+            var counter = parseInt(localStorage.getItem(counterKey) || '0', 10) + 1;
+            localStorage.setItem(counterKey, String(counter));
+            return 'INV-' + String(counter).padStart(4, '0');
+        }
+
+        function getStockKey() {
+            return 'stock_' + (localStorage.getItem('billingUser') || 'default');
+        }
+
+        function loadStockManagement() {
+            var stock = JSON.parse(localStorage.getItem(getStockKey()) || '[]');
+            var container = document.getElementById('stockList');
+            if (!container) return;
+            if (stock.length === 0) {
+                container.innerHTML = '<div style="padding:14px;text-align:center;color:#64748b;border:1px dashed #cbd5e1;border-radius:10px;">Abhi koi stock item nahi hai.</div>';
+                return;
+            }
+            container.innerHTML = stock.map(function(item, index) {
+                var low = Number(item.qty) <= Number(item.low);
+                return '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #e2e8f0;">' +
+                    '<div><b>' + item.name + '</b><div style="font-size:12px;color:' + (low ? '#dc2626' : '#64748b') + ';">' + item.qty + ' ' + item.unit + (low ? ' • Low Stock' : '') + '</div></div>' +
+                    '<button type="button" onclick="deleteStockItem(' + index + ')" style="border:0;background:#fee2e2;color:#b91c1c;padding:7px 10px;border-radius:7px;">Delete</button>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function addStockItem() {
+            var name = document.getElementById('stockProductName').value.trim();
+            var qty = parseFloat(document.getElementById('stockQuantity').value);
+            var unit = document.getElementById('stockUnit').value;
+            var low = parseFloat(document.getElementById('stockLowLevel').value) || 0;
+            var costPrice = parseFloat(document.getElementById('stockCostPrice').value) || 0;
+            if (!name || isNaN(qty) || qty < 0) {
+                alert('Kripya Product Name aur valid Quantity bharein.');
+                return;
+            }
+            var key = getStockKey();
+            var stock = JSON.parse(localStorage.getItem(key) || '[]');
+            var existing = stock.find(function(item) { return item.name.toLowerCase() === name.toLowerCase() && item.unit === unit; });
+            if (existing) {
+                existing.qty = qty;
+                existing.low = low;
+                existing.costPrice = costPrice;
+            } else {
+                stock.push({name:name, qty:qty, unit:unit, low:low, costPrice:costPrice});
+            }
+            localStorage.setItem(key, JSON.stringify(stock));
+            document.getElementById('stockProductName').value = '';
+            document.getElementById('stockQuantity').value = '';
+            document.getElementById('stockCostPrice').value = '';
+            loadStockManagement();
+        }
+
+        function deductStockFromBill(items) {
+            var key = getStockKey();
+            var stock = JSON.parse(localStorage.getItem(key) || '[]');
+            var changed = false;
+
+            items.forEach(function(item) {
+                var soldQty = parseFloat(item.qty) || 0;
+                if (soldQty <= 0) return;
+                var stockItem = stock.find(function(s) {
+                    return s.name.toLowerCase() === String(item.name).toLowerCase() && s.unit === item.unit;
+                });
+                if (stockItem) {
+                    stockItem.qty = Math.max(0, Number(stockItem.qty) - soldQty);
+                    changed = true;
+                }
+            });
+
+            if (changed) {
+                localStorage.setItem(key, JSON.stringify(stock));
+                loadStockManagement();
+            }
+        }
+
+        function deleteStockItem(index) {
+            var key = getStockKey();
+            var stock = JSON.parse(localStorage.getItem(key) || '[]');
+            if (!stock[index]) return;
+            if (!confirm('Kya aap is stock item ko delete karna chahte hain?')) return;
+            stock.splice(index, 1);
+            localStorage.setItem(key, JSON.stringify(stock));
+            loadStockManagement();
+        }
+
+        function getPurchaseKey() {
+            return 'purchases_' + (localStorage.getItem('billingUser') || 'default');
+        }
+
+        function savePurchaseEntry() {
+            var name = document.getElementById('purchaseProductName').value.trim();
+            var qty = parseFloat(document.getElementById('purchaseQuantity').value);
+            var unit = document.getElementById('purchaseUnit').value;
+            var price = parseFloat(document.getElementById('purchasePrice').value);
+            var supplier = document.getElementById('purchaseSupplier').value.trim();
+
+            if (!name || isNaN(qty) || qty <= 0 || isNaN(price) || price < 0) {
+                alert('Kripya Product, Quantity aur Purchase Price sahi se bharein.');
+                return;
+            }
+
+            var stockKey = getStockKey();
+            var stock = JSON.parse(localStorage.getItem(stockKey) || '[]');
+            var existing = stock.find(function(item) {
+                return item.name.toLowerCase() === name.toLowerCase() && item.unit === unit;
+            });
+
+            if (existing) {
+                existing.qty = Number(existing.qty) + qty;
+                existing.costPrice = price;
+            } else {
+                stock.push({name:name, qty:qty, unit:unit, low:5, costPrice:price});
+            }
+            localStorage.setItem(stockKey, JSON.stringify(stock));
+
+            var purchaseKey = getPurchaseKey();
+            var purchases = JSON.parse(localStorage.getItem(purchaseKey) || '[]');
+            purchases.unshift({id:Date.now(), date:new Date().toLocaleString('hi-IN'), productName:name, quantity:qty, unit:unit, price:price, total:(qty*price).toFixed(2), supplier:supplier});
+            localStorage.setItem(purchaseKey, JSON.stringify(purchases));
+
+            document.getElementById('purchaseProductName').value = '';
+            document.getElementById('purchaseQuantity').value = '';
+            document.getElementById('purchasePrice').value = '';
+            document.getElementById('purchaseSupplier').value = '';
+            loadPurchaseEntries();
+            loadStockManagement();
+            alert('Purchase Entry save ho gayi aur stock update ho gaya.');
+        }
+
+        function loadPurchaseEntries() {
+            var el = document.getElementById('purchaseEntryList');
+            if (!el) return;
+            var purchases = JSON.parse(localStorage.getItem(getPurchaseKey()) || '[]');
+            if (!purchases.length) {
+                el.innerHTML = '<div style="padding:14px;text-align:center;color:#64748b;border:1px dashed #cbd5e1;border-radius:10px;">Abhi koi purchase entry nahi hai.</div>';
+                return;
+            }
+            el.innerHTML = '<b>Recent Purchases</b>' + purchases.slice(0,10).map(function(p) {
+                return '<div style="padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:13px;"><b>' + p.productName + '</b> — ' + p.quantity + ' ' + p.unit + ' × ₹' + Number(p.price).toFixed(2) + ' = ₹' + p.total + '<br><span style="color:#64748b;">' + p.date + (p.supplier ? ' • Supplier: ' + p.supplier : '') + '</span></div>';
+            }).join('');
+        }
+
+        function loadReports() {
+            var user = localStorage.getItem('billingUser') || 'default';
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            var stock = JSON.parse(localStorage.getItem(getStockKey()) || '[]');
+            var fromEl = document.getElementById('reportFromDate');
+            var toEl = document.getElementById('reportToDate');
+            var summaryEl = document.getElementById('reportsSummary');
+            if (!summaryEl) return;
+
+            var from = fromEl && fromEl.value ? new Date(fromEl.value + 'T00:00:00') : null;
+            var to = toEl && toEl.value ? new Date(toEl.value + 'T23:59:59.999') : null;
+            if (from && to && from > to) {
+                summaryEl.innerHTML = '<p style="color:#dc2626; text-align:center;">From Date, To Date se pehle nahi ho sakti.</p>';
+                return;
+            }
+            var filtered = history.filter(function(bill) {
+                var d = bill.id ? new Date(Number(bill.id)) : null;
+                if (!d || isNaN(d.getTime())) return !from && !to;
+                if (from && d < from) return false;
+                if (to && d > to) return false;
+                return true;
+            });
+            var totalSales = 0, totalDiscount = 0, totalGST = 0, totalCost = 0;
+            var paymentStats = {}, productStats = {};
+            filtered.forEach(function(bill) {
+                totalSales += parseFloat(bill.grandTotal) || 0;
+                totalDiscount += parseFloat(bill.discount) || 0;
+                totalGST += parseFloat(bill.gstAmount) || 0;
+                var payment = bill.paymentMode || bill.payment || 'Not specified';
+                paymentStats[payment] = (paymentStats[payment] || 0) + 1;
+                var items = Array.isArray(bill.items) ? bill.items : [];
+                if (items.length === 0 && bill.prodName) items = [{name:bill.prodName, qty:parseFloat(bill.prodQty)||0, unit:bill.prodUnit||'', price:parseFloat(bill.prodPrice)||0}];
+                items.forEach(function(item) {
+                    var name = item.name || 'Unknown';
+                    var qty = parseFloat(item.qty) || 0;
+                    productStats[name] = (productStats[name] || 0) + qty;
+                    var si = stock.find(function(x) { return String(x.name).toLowerCase() === String(name).toLowerCase() && x.unit === item.unit; });
+                    if (si) totalCost += qty * (parseFloat(si.costPrice) || 0);
+                });
+            });
+            var averageBill = filtered.length ? totalSales / filtered.length : 0;
+            var profit = (totalSales - totalGST) - totalCost;
+            var margin = (totalSales - totalGST) > 0 ? (profit / (totalSales - totalGST)) * 100 : 0;
+            var topProducts = Object.keys(productStats).sort(function(a,b){return productStats[b]-productStats[a];}).slice(0,5);
+            var paymentHtml = Object.keys(paymentStats).map(function(k){return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e2e8f0;"><span>'+k+'</span><b>'+paymentStats[k]+' bill(s)</b></div>';}).join('');
+            var productHtml = topProducts.length ? topProducts.map(function(k){return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #e2e8f0;"><span>'+k+'</span><b>'+productStats[k]+'</b></div>';}).join('') : '<p style="color:#64748b;">No product data.</p>';
+            summaryEl.innerHTML =
+                '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">' +
+                '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:14px;"><small>Total Sales</small><h2 style="margin:6px 0;">₹'+totalSales.toFixed(2)+'</h2></div>' +
+                '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:14px;"><small>Total Bills</small><h2 style="margin:6px 0;">'+filtered.length+'</h2></div>' +
+                '<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;"><small>Average Bill</small><h2 style="margin:6px 0;">₹'+averageBill.toFixed(2)+'</h2></div>' +
+                '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px;"><small>Total GST</small><h2 style="margin:6px 0;">₹'+totalGST.toFixed(2)+'</h2></div>' +
+                '<div style="background:#f8fafc;border:1px solid #cbd5e1;border-radius:10px;padding:14px;"><small>Total Cost (entered cost price)</small><h2 style="margin:6px 0;">₹'+totalCost.toFixed(2)+'</h2></div>' +
+                '<div style="background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:14px;"><small>Profit / Loss</small><h2 style="margin:6px 0;">₹'+profit.toFixed(2)+'</h2><small>Margin: '+margin.toFixed(1)+'%</small></div>' +
+                '</div>' +
+                '<div style="margin-top:18px;padding:14px;border:1px solid #e2e8f0;border-radius:10px;"><b>Top Products</b>'+productHtml+'</div>' +
+                '<div style="margin-top:18px;padding:14px;border:1px solid #e2e8f0;border-radius:10px;"><b>Payment Summary</b>'+paymentHtml+'</div>';
+        }
+
+        function clearReportDates() {
+            var fromEl = document.getElementById('reportFromDate');
+            var toEl = document.getElementById('reportToDate');
+            if (fromEl) fromEl.value = '';
+            if (toEl) toEl.value = '';
+            loadReports();
+        }
+
+        function loadProfitLossReport() {
+            var user = localStorage.getItem('billingUser') || 'default';
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            var stock = JSON.parse(localStorage.getItem('stock_' + user)) || [];
+            var from = document.getElementById('profitFromDate').value;
+            var to = document.getElementById('profitToDate').value;
+            var filtered = history.filter(function(bill) {
+                var d = new Date(Number(bill.id));
+                if (isNaN(d.getTime())) return false;
+                var ds = d.toISOString().slice(0,10);
+                return (!from || ds >= from) && (!to || ds <= to);
+            });
+            var sales = 0, cost = 0;
+            filtered.forEach(function(bill) {
+                sales += parseFloat(bill.grandTotal) || 0;
+                var items = Array.isArray(bill.items) && bill.items.length ? bill.items : (bill.prodName ? [{name:bill.prodName, qty:parseFloat(bill.prodQty)||0, unit:bill.prodUnit||''}] : []);
+                items.forEach(function(item) {
+                    var st = stock.find(function(x){ return String(x.name||'').trim().toLowerCase() === String(item.name||'').trim().toLowerCase() && String(x.unit||'') === String(item.unit||''); });
+                    cost += (parseFloat(item.qty)||0) * (st ? (parseFloat(st.costPrice)||0) : 0);
+                });
+            });
+            var profit = sales - cost;
+            var margin = sales ? (profit / sales) * 100 : 0;
+            document.getElementById('profitLossSummary').innerHTML =
+                '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;">' +
+                '<div style="padding:14px;border:1px solid #e2e8f0;border-radius:10px;"><small>Total Sales</small><h2 style="margin:6px 0;">₹'+sales.toFixed(2)+'</h2></div>' +
+                '<div style="padding:14px;border:1px solid #e2e8f0;border-radius:10px;"><small>Total Cost</small><h2 style="margin:6px 0;">₹'+cost.toFixed(2)+'</h2></div>' +
+                '<div style="padding:14px;border:1px solid #e2e8f0;border-radius:10px;"><small>Profit / Loss</small><h2 style="margin:6px 0;">₹'+profit.toFixed(2)+'</h2></div>' +
+                '<div style="padding:14px;border:1px solid #e2e8f0;border-radius:10px;"><small>Margin</small><h2 style="margin:6px 0;">'+margin.toFixed(1)+'%</h2></div></div>';
+        }
+
+        function clearProfitLossDates() {
+            document.getElementById('profitFromDate').value = '';
+            document.getElementById('profitToDate').value = '';
+            loadProfitLossReport();
+        }
+
+        function loadSalesDashboard() {
+            var user = localStorage.getItem('billingUser') || 'default';
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            var totalSales = 0;
+            var todaySales = 0;
+            var productStats = {};
+            var now = new Date();
+
+            history.forEach(function(bill) {
+                var amount = parseFloat(bill.grandTotal) || 0;
+                totalSales += amount;
+
+                var billDate = new Date(Number(bill.id));
+                if (!isNaN(billDate.getTime()) &&
+                    billDate.getFullYear() === now.getFullYear() &&
+                    billDate.getMonth() === now.getMonth() &&
+                    billDate.getDate() === now.getDate()) {
+                    todaySales += amount;
+                }
+
+                var items = Array.isArray(bill.items) && bill.items.length ? bill.items : (bill.prodName ? [{
+                    name: bill.prodName,
+                    qty: parseFloat(bill.prodQty) || 0,
+                    unit: bill.prodUnit || '',
+                    price: parseFloat(bill.prodPrice) || 0
+                }] : []);
+
+                items.forEach(function(item) {
+                    var name = String(item.name || '').trim();
+                    var qty = parseFloat(item.qty) || 0;
+                    if (!name) return;
+                    if (!productStats[name]) productStats[name] = { qty: 0, unit: item.unit || '' };
+                    productStats[name].qty += qty;
+                });
+            });
+
+            var billCount = history.length;
+            var averageBill = billCount ? totalSales / billCount : 0;
+
+            document.getElementById('salesTotal').innerText = '₹' + totalSales.toFixed(2);
+            document.getElementById('salesBillCount').innerText = String(billCount);
+            document.getElementById('salesAverage').innerText = '₹' + averageBill.toFixed(2);
+            document.getElementById('salesToday').innerText = '₹' + todaySales.toFixed(2);
+
+            var topProducts = Object.keys(productStats).map(function(name) {
+                return { name: name, qty: productStats[name].qty, unit: productStats[name].unit };
+            }).sort(function(a, b) { return b.qty - a.qty; }).slice(0, 5);
+
+            var topContainer = document.getElementById('topProductsList');
+            if (topProducts.length === 0) {
+                topContainer.innerHTML = 'Abhi koi sales data nahi hai.';
+                return;
+            }
+
+            topContainer.innerHTML = topProducts.map(function(product, index) {
+                return '<div style="display:flex; justify-content:space-between; gap:10px; padding:9px 0; border-bottom:1px solid #e2e8f0;">' +
+                    '<span><b>' + (index + 1) + '.</b> ' + product.name + '</span>' +
+                    '<span style="font-weight:700; color:#0f766e;">' + product.qty + ' ' + product.unit + '</span>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function generateBill() {
+            var sName = document.getElementById('shopName').value;
+            var sPhone = document.getElementById('shopPhone').value;
+            var sAddr = document.getElementById('shopAddress').value;
+            var cName = document.getElementById('custName').value;
+            var cPhone = document.getElementById('custPhone').value;
+            var disc = parseFloat(document.getElementById('discount').value) || 0;
+            var gst = parseFloat(document.getElementById('gstRate').value) || 0;
+            var items = getBillItems();
+
+            if (!sName || !cName || items.length === 0) {
+                alert("Kripya Dukan ka naam, Customer ka naam aur kam se kam ek Product zaroor bharein!");
+                return;
+            }
+
+            if (!currentInvoiceNumber) {
+                var previewUser = localStorage.getItem('billingUser') || 'default';
+                currentInvoiceNumber = getNextInvoiceNumber(previewUser);
+            }
+
+            var rawSubTotal = items.reduce(function(sum, item) { return sum + (item.qty * item.price); }, 0);
+            var subTotal = Math.max(0, rawSubTotal - disc);
+            var gstAmount = (subTotal * gst) / 100;
+            var grandTotal = subTotal + gstAmount;
+
+            document.getElementById('outShopName').innerText = sName;
+            document.getElementById('outShopAddress').innerText = sAddr;
+            document.getElementById('outShopPhone').innerText = sPhone;
+            document.getElementById('outCustName').innerText = cName;
+            document.getElementById('outCustPhone').innerText = cPhone;
+            document.getElementById('outInvoiceNumber').innerText = currentInvoiceNumber;
+
+            var tbody = document.getElementById('outItemsBody');
+            tbody.innerHTML = items.map(function(item) {
+                var total = item.qty * item.price;
+                return '<tr><td>' + item.name + '</td><td>' + item.qty + ' ' + item.unit + '</td><td>₹' + item.price.toFixed(2) + '</td><td>₹' + total.toFixed(2) + '</td></tr>';
+            }).join('');
+
+            document.getElementById('outSubTotal').innerText = subTotal.toFixed(2);
+            document.getElementById('outDiscount').innerText = disc.toFixed(2);
+            document.getElementById('outGstAmount').innerText = gstAmount.toFixed(2);
+            document.getElementById('outGrandTotal').innerText = grandTotal.toFixed(2);
+            document.getElementById('invoiceView').style.display = 'block';
+        }
+
+        function saveBillRecord() {
+            var sName = document.getElementById('shopName').value;
+            var sPhone = document.getElementById('shopPhone').value;
+            var sAddr = document.getElementById('shopAddress').value;
+            var cName = document.getElementById('custName').value;
+            var cPhone = document.getElementById('custPhone').value;
+            var disc = parseFloat(document.getElementById('discount').value) || 0;
+            var gst = parseFloat(document.getElementById('gstRate').value) || 0;
+            var items = getBillItems();
+
+            if (!sName || !cName || items.length === 0) {
+                alert("Kripya zaroori fields bharein!");
+                return;
+            }
+
+            var user = localStorage.getItem('billingUser') || 'default';
+            if (!currentInvoiceNumber) {
+                currentInvoiceNumber = assignNextInvoiceNumber(user);
+            } else {
+                var counterKey = 'invoiceCounter_' + user;
+                var currentCounter = parseInt(localStorage.getItem(counterKey) || '0', 10);
+                var invoiceNumberValue = parseInt(currentInvoiceNumber.replace('INV-', ''), 10) || 0;
+                if (invoiceNumberValue > currentCounter) {
+                    localStorage.setItem(counterKey, String(invoiceNumberValue));
+                }
+            }
+
+            var rawSubTotal = items.reduce(function(sum, item) { return sum + (item.qty * item.price); }, 0);
+            var subTotal = Math.max(0, rawSubTotal - disc);
+            var gstAmount = (subTotal * gst) / 100;
+            var grandTotal = subTotal + gstAmount;
+
+            var first = items[0];
+            var billData = {
+                id: Date.now(),
+                invoiceNumber: currentInvoiceNumber,
+                date: new Date().toLocaleDateString('hi-IN') + ' ' + new Date().toLocaleTimeString(),
+                shopName: sName,
+                shopPhone: sPhone,
+                shopAddress: sAddr,
+                custName: cName,
+                custPhone: cPhone,
+                prodName: first.name,
+                prodQty: first.qty,
+                prodUnit: first.unit,
+                prodPrice: first.price,
+                items: items,
+                discount: disc,
+                gstRate: gst,
+                subTotal: subTotal.toFixed(2),
+                gstAmount: gstAmount.toFixed(2),
+                grandTotal: grandTotal.toFixed(2)
+            };
+
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            history.unshift(billData);
+            localStorage.setItem('bills_' + user, JSON.stringify(history));
+
+            // Automatic Stock Deduction: saved bill ke items stock se minus honge.
+            deductStockFromBill(items);
+
+            generateBill();
+            alert("Bill safalpurvak Save ho gaya hai!");
+        }
+
+        function loadHistory() {
+            var user = localStorage.getItem('billingUser') || 'default';
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            var container = document.getElementById('historyListContainer');
+            
+            if (history.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#64748b; padding: 20px;'>Koi purana bill nahi mila.</p>";
+                return;
+            }
+
+            var html = "";
+            history.forEach(function(bill, index) {
+                html += `<div style="display:flex; align-items:center; justify-content:space-between; background:#f8fafc; border:1px solid #cbd5e1; padding:12px; border-radius:8px; margin-bottom:10px;" class="history-row-item">
+                    <div style="display:flex; align-items:center; gap:10px; flex:1;" onclick="viewSavedBill(${index})">
+                        <input type="checkbox" class="bill-checkbox" data-index="${index}" onclick="event.stopPropagation()" style="width:16px; height:16px; cursor:pointer;">
+                        <div>
+                            <p style="margin:0; font-weight:bold; color:#0f766e; font-size:14px;">${bill.invoiceNumber || 'Old Bill'} — ${bill.custName} (${bill.custPhone})</p>
+                            <p style="margin:3px 0 0; font-size:12px; color:#475569;">Item: ${(bill.items && bill.items.length) ? bill.items.length + ' item(s)' : bill.prodName} | Total: ₹${bill.grandTotal}</p>
+                            <p style="margin:2px 0 0; font-size:10px; color:#94a3b8;">${bill.date}</p>
+                        </div>
+                    </div>
+                    <button type="button" onclick="deleteSingleBill(${index})" style="background:#ef4444; color:white; border:none; padding:6px 10px; border-radius:4px; font-size:11px; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
+                </div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function viewSavedBill(index) {
+            var user = localStorage.getItem('billingUser') || 'default';
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            var bill = history[index];
+            if(!bill) return;
+
+            document.getElementById('modalShopName').innerText = bill.shopName;
+            document.getElementById('modalShopAddress').innerText = bill.shopAddress || '';
+            document.getElementById('modalShopPhone').innerText = bill.shopPhone;
+            document.getElementById('modalCustName').innerText = bill.custName;
+            document.getElementById('modalCustPhone').innerText = bill.custPhone;
+            document.getElementById('modalInvoiceNumber').innerText = bill.invoiceNumber || 'Old Bill';
+            document.getElementById('modalDate').innerText = bill.date;
+
+            var items = bill.items && Array.isArray(bill.items) ? bill.items : [{name: bill.prodName, qty: bill.prodQty, unit: bill.prodUnit, price: bill.prodPrice}];
+            document.getElementById('modalItemsBody').innerHTML = items.map(function(item) {
+                var total = (parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0);
+                return '<tr><td>' + (item.name || '') + '</td><td>' + (item.qty || 0) + ' ' + (item.unit || '') + '</td><td>₹' + (parseFloat(item.price) || 0).toFixed(2) + '</td><td>₹' + total.toFixed(2) + '</td></tr>';
+            }).join('');
+
+            var fallbackSubtotal = items.reduce(function(sum, item) { return sum + ((parseFloat(item.qty) || 0) * (parseFloat(item.price) || 0)); }, 0);
+            document.getElementById('modalSubTotal').innerText = bill.subTotal || fallbackSubtotal.toFixed(2);
+            document.getElementById('modalDiscount').innerText = bill.discount !== undefined ? parseFloat(bill.discount).toFixed(2) : '0.00';
+            document.getElementById('modalGstAmount').innerText = bill.gstAmount || '0.00';
+            document.getElementById('modalGrandTotal').innerText = bill.grandTotal;
+
+            document.getElementById('billModal').style.display = 'flex';
+        }
+
+        function closeBillModal() {
+            document.getElementById('billModal').style.display = 'none';
+        }
+
+        function deleteSingleBill(index) {
+            if(confirm("Kya aap is bill ko delete karna chahte hain?")) {
+                var user = localStorage.getItem('billingUser') || 'default';
+                var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+                history.splice(index, 1);
+                localStorage.setItem('bills_' + user, JSON.stringify(history));
+                loadHistory();
+            }
+        }
+
+        function toggleSelectAll(master) {
+            var checkboxes = document.querySelectorAll('.bill-checkbox');
+            checkboxes.forEach(function(cb) {
+                cb.checked = master.checked;
+            });
+        }
+
+        function deleteSelectedBills() {
+            var checkboxes = document.querySelectorAll('.bill-checkbox:checked');
+            if(checkboxes.length === 0) {
+                alert("Kripya delete karne ke liye kam se kam ek bill select karein.");
+                return;
+            }
+            if(confirm("Kya aap sabhi select kiye gaye bills ko delete karna chahte hain?")) {
+                var user = localStorage.getItem('billingUser') || 'default';
+                var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+                var indicesToDelete = Array.from(checkboxes).map(cb => parseInt(cb.getAttribute('data-index')));
+                
+                history = history.filter((_, i) => !indicesToDelete.includes(i));
+                localStorage.setItem('bills_' + user, JSON.stringify(history));
+                document.getElementById('selectAllCheckbox').checked = false;
+                loadHistory();
+            }
+        }
+
+        function resetForm() {
+            currentInvoiceNumber = null;
+            document.getElementById('billingForm').reset();
+            var container = document.getElementById('itemsContainer');
+            var rows = container.querySelectorAll('[data-item-row]');
+            rows.forEach(function(row, index) { if(index > 0) row.remove(); });
+            updateRemoveButtons();
+            document.getElementById('invoiceView').style.display = 'none';
+        }
+
+        function openInfoModal(type) {
+            var content = "";
+            if(type === 'terms') {
+                content = "<h2 style='color:#0f766e; margin-top:0;'>Terms & Conditions</h2>" +
+                          "<p>Hamare billing software ko use karne ke niyam aur shartein:</p>" +
+                          "<ul><li>Is application ka upyog aap apne vyaparik billing aur invoices banane ke liye kar sakte hain.</li>" +
+                          "<li>Diy gaye data aur bills ki accuracy ki zimmedari user ki khud ki hogi.</li></ul>";
+            } else if(type === 'privacy') {
+                content = "<h2 style='color:#0f766e; margin-top:0;'>Privacy Policy</h2>" +
+                          "<p>Smart Billing system aapki data ki poori suraksha aur gopniyata ko dhyan mein rakh kar banaya gaya hai:</p>" +
+                          "<ul><li>Aapka poora billing data aur shop ki details sirf aapke browser ke local storage mein safe rehti hain.</li></ul>";
+            }
+            document.getElementById('modalInfoBody').innerHTML = content;
+            document.getElementById('infoModal').style.display = 'flex';
+        }
+
+        function closeInfoModal() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        function downloadBackup() {
+            var user = localStorage.getItem('billingUser') || 'default';
+            var history = JSON.parse(localStorage.getItem('bills_' + user)) || [];
+            var counterKey = 'invoiceCounter_' + user;
+            var invoiceCounter = parseInt(localStorage.getItem(counterKey) || '0', 10) || 0;
+
+            var backupData = {
+                app: 'Billing India',
+                backupType: 'Billing Backup',
+                version: 1,
+                createdAt: new Date().toISOString(),
+                bills: history,
+                invoiceCounter: invoiceCounter
+            };
+
+            var blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            var datePart = new Date().toISOString().slice(0, 10);
+            a.href = url;
+            a.download = 'Billing-India-Backup-' + datePart + '.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            alert('Backup file safalpurvak download ho gayi hai!');
+        }
+
+        function restoreBackup(event) {
+            var file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    var backupData = JSON.parse(e.target.result);
+                    if (!backupData || backupData.app !== 'Billing India' || backupData.backupType !== 'Billing Backup' || !Array.isArray(backupData.bills)) {
+                        alert('Yeh valid Billing India backup file nahi hai.');
+                        event.target.value = '';
+                        return;
+                    }
+
+                    if (!confirm('Kya aap current user ke billing records ko is backup se restore karna chahte hain?')) {
+                        event.target.value = '';
+                        return;
+                    }
+
+                    var user = localStorage.getItem('billingUser') || 'default';
+                    localStorage.setItem('bills_' + user, JSON.stringify(backupData.bills));
+
+                    if (Number.isFinite(Number(backupData.invoiceCounter))) {
+                        localStorage.setItem('invoiceCounter_' + user, String(parseInt(backupData.invoiceCounter, 10) || 0));
+                    }
+
+                    currentInvoiceNumber = null;
+                    loadHistory();
+                    alert('Backup safalpurvak restore ho gaya hai!');
+                    event.target.value = '';
+                } catch (error) {
+                    alert('Backup file read nahi ho saki. Kripya sahi JSON backup file select karein.');
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function sendSupportMessage(event) {
+            event.preventDefault();
+            var name = document.getElementById('suppName').value;
+            var phone = document.getElementById('suppPhone').value;
+            var email = document.getElementById('suppEmail').value;
+            var msg = document.getElementById('suppMsg').value;
+
+            var text = "Support Request:%0AName: " + encodeURIComponent(name) + "%0APhone: " + encodeURIComponent(phone) + "%0AEmail: " + encodeURIComponent(email) + "%0AMessage: " + encodeURIComponent(msg);
+            window.open("https://wa.me/917424967425?text=" + text, "_blank");
+        }
+    </script>
+</body>
+</html>
